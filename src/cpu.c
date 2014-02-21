@@ -2,7 +2,9 @@
 
 /* opcodes: http://www.pastraiser.com/cpu/gameboy/gameboy_opcodes.html */
 
-/* 8bit loads */
+/*
+ * ======== 8bit loads
+ */
 
 void ld_B_B(cpu_state* s) {
     s->bc.bytes.first = s->bc.bytes.first;
@@ -467,6 +469,110 @@ void ld_A_A(cpu_state* s) {
 }
 
 /* ------------------------------------------------------------------------- */
+void ld_addrof_BC_A(cpu_state* s) {
+    /* store a to address of BC */
+    word address = s->bc.word;
+    memory[address] = s->af.bytes.first;
+    s->last_m = 1;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_addrof_DE_A(cpu_state* s) {
+    word address = s->de.word;
+    memory[address] = s->af.bytes.first;
+    s->last_m = 1;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_addrof_HL_A_inc(cpu_state* s) {
+    word address = s->hl.word;
+    memory[address] = s->af.bytes.first;
+    s->hl.word += 1;
+    s->last_m = 1;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_addrof_HL_A_dec(cpu_state* s) {
+    word address = s->hl.word;
+    memory[address] = s->af.bytes.first;
+    s->hl.word -= 1;
+    s->last_m = 1;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_B_immediate_byte(cpu_state* s) {
+    byte immed = (memory[s->pc] + sizeof(byte));
+    s->bc.bytes.first = immed;
+    s->last_m = 2;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_D_immediate_byte(cpu_state* s) {
+    byte immed = (memory[s->pc] + sizeof(byte));
+    s->de.bytes.first = immed;
+    s->last_m = 2;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_H_immediate_byte(cpu_state* s) {
+    byte immed = (memory[s->pc] + sizeof(byte));
+    s->hl.bytes.first = immed;
+    s->last_m = 2;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_addrof_HL_immediate_byte(cpu_state* s) {
+    byte immed = (memory[s->pc] + sizeof(byte));
+    byte* dest = memory + s->hl.word;
+    *dest = immed;
+    s->last_m = 2;
+    s->last_t = 12
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_A_addrof_BC(cpu_state* s) {
+    /* store a to address of BC */
+    word address = s->bc.word;
+    s->af.bytes.first = memory[address];
+    s->last_m = 1;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_A_addrof_DE(cpu_state* s) {
+    word address = s->de.word;
+    s->af.bytes.first = memory[address];
+    s->last_m = 1;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_A_addrof_HL_inc(cpu_state* s) {
+    word address = s->hl.word;
+    s->af.bytes.first = memory[address];
+    s->hl.word += 1;
+    s->last_m = 1;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_A_addrof_HL_dec(cpu_state* s) {
+    word address = s->hl.word;
+    memory[address] = s->af.bytes.first;
+    s->hl.word -= 1;
+    s->last_m = 1;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+
 /* TODO: Remaining 8-bit loads; 4x-7x opcodes are done, remaining are:
- *  [0-3]2, [0-3]6, [0-3]a, [0-3]e, e0, f0, e2, f2, ea, fa
+ *  e0, f0, e2, f2, ea, fa
  */
