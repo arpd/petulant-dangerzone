@@ -572,7 +572,62 @@ void ld_A_addrof_HL_dec(cpu_state* s) {
 }
 
 /* ------------------------------------------------------------------------- */
+void ld_offsetof_immediate_byte_A(cpu_state* s) {
+    /* store `a` at address 0xFF00 + immediate */
+    byte immed = (memory[s->pc] + sizeof(byte));
+    word address = 0xFF00 + ((word) immed >> 8);
+    memory[address] = s->af.bytes.first;
+    s->last_m = 2;
+    s->last_t = 12;
+}
 
-/* TODO: Remaining 8-bit loads; 4x-7x opcodes are done, remaining are:
- *  e0, f0, e2, f2, ea, fa
+/* ------------------------------------------------------------------------- */
+void ld_A_offsetof_immediate_byte(cpu_state* s) {
+    /* load `a` from address 0xFF00 + immediate */
+    byte immed = (memory[s->pc] + sizeof(byte));
+    word address = 0xFF00 + ((word) immed >> 8);
+    s->af.bytes.first = memory[address];
+    s->last_m = 2;
+    s->last_t = 12;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_offsetof_C_A(cpu_state* s) {
+    /* store `a` at address 0xFF00 + `c` */
+    word address = 0xFF00 + (word) s->bc.bytes.second;
+    memory[address] = s->af.bytes.first ;
+    s->last_m = 2;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_A_offsetof_C(cpu_state* s) {
+    /* load `a` from address 0xFF00 + `c` */
+    word address = 0xFF00 + (word) s->bc.bytes.second;
+    s->af.bytes.first = memory[address];
+    s->last_m = 2;
+    s->last_t = 8;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_addrof_immediate_word_A(cpu_state* s) {
+    /* store `a` at the address of the following 16-bit immediate */
+    word addr = (memory[s->pc+1] << 8) + (memory[s->pc+2]);
+    memory[addr] = s->af.bytes.a;
+    s->last_m = 3;
+    s->last_t = 16;
+}
+
+/* ------------------------------------------------------------------------- */
+void ld_A_addrof_immediate_word(cpu_state* s) {
+    /* load `a` from the address of the following 16-bit immediate */
+    word addr = (memory[s->pc+1] << 8) + (memory[s->pc+2]);
+    s->af.bytes.a = memory[addr];
+    s->last_m = 3;
+    s->last_t = 16;
+}
+
+
+/*
+ * TODO: 16-bit loads
  */
